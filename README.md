@@ -142,5 +142,17 @@ their own synthetic ROM data, so they don't need the real ROMs.
 
 ## Licensing
 
-The chip emulation is ported from MAME and is BSD-3-Clause. See
-[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for the details and credits.
+This code is based on MAME's Berzerk code
+([`berzerk.cpp`](https://github.com/mamedev/mame/blob/master/src/mame/stern/berzerk.cpp)) and its S14001A
+speech chip emulation
+([`s14001a.cpp`](https://github.com/mamedev/mame/blob/master/src/devices/sound/s14001a.cpp)). Both are
+BSD-3-Clause licensed.
+
+Credits to the original authors:
+
+- **Berzerk driver (`berzerk.cpp`):** Zsolt Vasvari, Aaron Giles, R. Belmont and Jonathan Gevaryahu.
+  Original sound driver by Alex Judd.
+- **S14001A emulation (`s14001a.cpp`):** Ed Bernard, Jonathan Gevaryahu (Lord Nightmare) and hap,
+  with thanks to Kevin Horton.
+
+See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for the full license text.
