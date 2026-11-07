@@ -1,36 +1,32 @@
 # BerzerkSound
 
-A Windows command-line program that says words in the robot voice of Stern's 1980 arcade game
-**Berzerk**. It runs the words through an emulation of the game's **TSI S14001A** speech chip, using
-the game's own speech ROMs.
+Says words in the robot voice of Stern's 1980 arcade game **Berzerk**. It runs your text through an
+emulation of the game's **TSI S14001A** speech chip, using the game's own speech ROMs.
 
 ```console
 BerzerkSound "Intruder alert! Intruder alert!"
 ```
 
-The chip emulation is a C# port of MAME's
-[`s14001a.cpp`](https://github.com/mamedev/mame/blob/master/src/devices/sound/s14001a.cpp). The way
-words are fed to the chip (clock dividers, volume, and the start-on-the-next-NMI timing between words)
-follows MAME's [`berzerk.cpp`](https://github.com/mamedev/mame/blob/master/src/mame/stern/berzerk.cpp)
-and the [Berzerk disassembly](https://github.com/ScottTunstall/Berzerk/blob/main/berzerk.asm).
+**Windows only.** It needs the .NET 10 SDK to build and Windows to run.
 
-## The speech ROMs
+## Quick start
 
-The speech data is copyrighted, so it isn't included. You need the English Berzerk speech ROMs from a
-MAME ROM set: `berzerk.zip` (or `frenzy.zip`, which holds the same speech data). The program uses
-the first of these it finds:
+1. **Get the speech ROMs.** They're copyrighted, so they aren't in this repo. You need MAME's
+   `berzerk.zip` (or `frenzy.zip`) from a MAME ROM set. Put it in the [roms](roms) folder.
+2. **Build.**
 
-1. the path given with `--rom`: a zip file, or a directory holding the zip or the two loose files
-   (`berzerk_r_vo_1c.1c` and `berzerk_r_vo_2c.2c`);
-2. the directory the program is in;
-3. the current directory.
+   ```console
+   dotnet build
+   ```
 
-Both chips are checked against MAME's CRC32 values (1C `2cfe825d`, 2C `d2b6324e`). Inside a zip they
-are found by CRC, so renamed files work too. The French, German and Spanish ROMs hold other words and
-are rejected.
+   The build copies the ROMs next to `BerzerkSound.exe`.
+3. **Run.**
 
-For local builds, put `berzerk.zip` in the repository's `roms` folder and it is copied next to the
-executable.
+   ```console
+   dotnet run --project src/BerzerkSound -- "Chicken! Fight like a robot!"
+   ```
+
+   Or run `src\BerzerkSound\bin\Debug\net10.0\BerzerkSound.exe` directly.
 
 ## Usage
 
@@ -47,8 +43,20 @@ BerzerkSound --list
   --                     Treat everything after this as words.
 ```
 
-You can only use words that are in the ROM's vocabulary. Case, punctuation and digits are ignored.
-If any word is unknown, nothing is said, and every unknown word is reported (exit code 5).
+Examples:
+
+```console
+BerzerkSound "Intruder alert! Intruder alert!"
+BerzerkSound -p 5 chicken fight like a robot
+BerzerkSound -f escape.wav "The humanoid must not escape"
+```
+
+Case, punctuation and digits are ignored. Words can be separate arguments or one quoted string.
+
+### Supported words
+
+Berzerk's ROM holds only 29 words, so you can only say those. If any word in your text is unknown,
+nothing is said and every unknown word is reported.
 
 | No. | Word | No. | Word | No. | Word |
 |----:|------|----:|------|----:|------|
@@ -65,13 +73,16 @@ If any word is unknown, nothing is said, and every unknown word is reported (exi
 
 ¹ In the ROM, but never used by the game.
 
+The same list is in `--help`, and `--list` also shows the word numbers.
+
 ### Pitch and volume
 
 These are the two 3-bit fields of the byte the game writes to the speech board (port 44h,
 `01vvvppp`). Pitch selects a clock divider of 16 − pitch. That sets the chip clock, which is also the
-WAV sample rate, from 19.5 kHz (pitch 0) to 34.7 kHz (pitch 7). The defaults, pitch 3 and volume 7,
-are the game's settings for "Intruder alert! Intruder alert!" (7Bh). The game's random robot taunts
-use a random pitch.
+WAV sample rate, from 19.5 kHz (pitch 0) to 34.7 kHz (pitch 7). Volume 0 is silent.
+
+The defaults, pitch 3 and volume 7, are the game's settings for "Intruder alert! Intruder alert!". The
+game picks a random pitch for its robot taunts, so try a few values with `-p`.
 
 ### Exit codes
 
@@ -83,18 +94,53 @@ use a random pitch.
 | 4 | Speech could not be played or written |
 | 5 | A word is not in Berzerk's vocabulary |
 
-## Building
+## The speech ROMs
 
-You need the .NET 10 SDK. The project targets .NET 10 only.
+Only the English Berzerk/Frenzy ROMs work. The French, German and Spanish sets hold different
+words and are rejected. The program uses the first of these it finds:
+
+1. the path given with `--rom`: a zip file, or a directory holding the zip or the two loose files
+   (`berzerk_r_vo_1c.1c` and `berzerk_r_vo_2c.2c`);
+2. the folder `BerzerkSound.exe` is in;
+3. the current folder.
+
+Both chips are checked against MAME's CRC32 values (1C `2cfe825d`, 2C `d2b6324e`). Inside a zip they are
+found by CRC, so renamed files work too.
+
+## How it works
+
+Berzerk's voice board has a single S14001A chip. The chip reads a 4 KB ROM that holds a word table, a
+syllable table and the sound itself, stored as 2-bit delta-modulated samples. To say a word, the game
+puts a 6-bit word number on the chip's inputs and pulses its START pin. The chip then walks the ROM and
+produces one 4-bit sample per clock until the word ends.
+
+This program does the same in software:
+
+- [S14001AChip.cs](src/BerzerkSound/Synthesis/S14001AChip.cs) is a C# port of MAME's
+  [`s14001a.cpp`](https://github.com/mamedev/mame/blob/master/src/devices/sound/s14001a.cpp), clock
+  for clock.
+- [BerzerkSpeechRenderer.cs](src/BerzerkSound/Speech/BerzerkSpeechRenderer.cs) feeds it the way the game
+  does. The game checks the chip about 477 times a second and sends the next word only when the chip is
+  no longer busy, so the short gaps between words match the arcade machine.
+- The pitch and volume settings, and the clock dividers, come from MAME's
+  [`berzerk.cpp`](https://github.com/mamedev/mame/blob/master/src/mame/stern/berzerk.cpp). The word
+  numbers and the game's own speech routine come from the
+  [Berzerk disassembly](https://github.com/ScottTunstall/Berzerk/blob/main/berzerk.asm).
+
+The output is a straight port, but it hasn't been compared sample for sample against a MAME recording.
+
+## Development
 
 ```console
 dotnet build
 dotnet test
 ```
 
-Every compiler, .NET analyzer and Roslynator warning is a build error. The house rules are listed at
-the top of [.editorconfig](.editorconfig).
+The project targets .NET 10 only. Every compiler, .NET analyzer and Roslynator warning is a build
+error, and the house rules are listed at the top of [.editorconfig](.editorconfig). The tests build
+their own synthetic ROM data, so they don't need the real ROMs.
 
 ## Licensing
 
-See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md). The ported MAME code is BSD-3-Clause.
+The chip emulation is ported from MAME and is BSD-3-Clause. See
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) for the details and credits.
