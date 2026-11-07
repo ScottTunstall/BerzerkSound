@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>BerzerkSound</RootNamespace>
+    <AssemblyName>BerzerkSound</AssemblyName>
+    <Version>1.0.0</Version>
+    <Description>Says words in the voice of Stern's Berzerk robots through an emulation of the S14001A speech chip, ported from MAME.</Description>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <!-- LibraryImport generates unsafe marshalling code for the winmm.dll call. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- The XML documentation file exists for the analyzers; installed copies have no use for it. -->
+    <PublishDocumentationFile>false</PublishDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Hashing" Version="10.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The speech ROMs are copyrighted firmware and are not part of the source tree.
+         Put berzerk.zip (or the loose 1C and 2C ROM files) in the repository's roms folder and they are
+         copied next to the executable for local builds. They are never published. -->
+    <None Include="..\..\roms\*.zip;..\..\roms\*.1c;..\..\roms\*.2c" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="BerzerkSound.Tests" />
+  </ItemGroup>
+
+</Project>

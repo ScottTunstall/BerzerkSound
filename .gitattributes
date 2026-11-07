@@ -1,0 +1,7 @@
+# Store text with LF in the repository and check it out with CRLF, matching end_of_line in .editorconfig.
+* text=auto eol=crlf
+
+# Binary files are never converted (ROM images themselves are git-ignored).
+*.bin binary
+*.wav binary
+*.exe binary

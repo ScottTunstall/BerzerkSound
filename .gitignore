@@ -1,0 +1,13 @@
+bin/
+obj/
+.vs/
+*.user
+TestResults/
+
+# Berzerk speech ROM images are copyrighted firmware; never commit them.
+roms/*
+!roms/README.md
+*.wav
+
+# Session scratch and IDE state
+.claude/
