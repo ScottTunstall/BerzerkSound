@@ -32,7 +32,8 @@ internal static class UsageText
         can be said; run with --list to see them. Case and punctuation are ignored.
 
         Options:
-          -f, --file <path>      Write the speech to a WAV file instead of playing it.
+          -f, --file <path>      Write the speech to a file instead of playing it: Ogg Vorbis if the name
+                                 ends in .ogg, otherwise WAV.
           -p, --pitch <{0}-{1}>      Speech clock setting; higher is faster and higher pitched (default {2},
                                  as in the game's "Intruder alert!").
               --volume <{3}-{4}>     Volume; {3} is silent, as on the real board (default {5}).
@@ -54,6 +55,7 @@ internal static class UsageText
           BerzerkSound "THE HUMANOID MUST NOT ESCAPE"
           BerzerkSound -p 5 chicken fight like a robot
           BerzerkSound -f escape.wav "The humanoid must not escape"
+          BerzerkSound -f escape.ogg "The humanoid must not escape"
 
         """,
         VoiceLimits.MinimumPitch,

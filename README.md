@@ -34,7 +34,8 @@ BerzerkSound "Intruder alert! Intruder alert!"
 BerzerkSound [options] [--] <words>
 BerzerkSound --list
 
-  -f, --file <path>      Write the speech to a WAV file instead of playing it.
+  -f, --file <path>      Write the speech to a file instead of playing it: Ogg Vorbis if the name
+                         ends in .ogg, otherwise WAV.
   -p, --pitch <0-7>      Speech clock setting; higher is faster and higher pitched (default 3).
       --volume <0-7>     Volume; 0 is silent, as on the real board (default 7).
   -r, --rom <path>       Directory or MAME zip holding the English speech ROMs.
@@ -67,10 +68,12 @@ BerzerkSound -p 6 "Get the humanoid"
 BerzerkSound -p 1 "Kill the intruder"
 ```
 
-Save to a WAV file instead of playing:
+Save to a file instead of playing. The format follows the extension: `.ogg` writes Ogg Vorbis, anything
+else writes WAV.
 
 ```console
 BerzerkSound -f escape.wav "The humanoid must not escape"
+BerzerkSound -f escape.ogg "The humanoid must not escape"
 ```
 
 Case, punctuation and digits are ignored. Anything Berzerk can't say is reported and nothing is played:
@@ -168,6 +171,9 @@ error, and the house rules are listed at the top of [.editorconfig](.editorconfi
 their own synthetic ROM data, so they don't need the real ROMs.
 
 ## Licensing
+
+The Ogg Vorbis files are written with
+[OggVorbisEncoder](https://github.com/SteveLillis/.NET-Ogg-Vorbis-Encoder) (MIT).
 
 This code is based on MAME's Berzerk code
 ([`berzerk.cpp`](https://github.com/mamedev/mame/blob/master/src/mame/stern/berzerk.cpp)) and its S14001A

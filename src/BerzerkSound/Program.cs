@@ -84,7 +84,7 @@ internal static class Program
     {
         if (outputFile is not null)
         {
-            return new WaveFileOutput(outputFile);
+            return FileOutputFactory.Create(outputFile);
         }
 
         return OperatingSystem.IsWindows()
