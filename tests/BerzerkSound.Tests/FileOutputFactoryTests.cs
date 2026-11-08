@@ -13,7 +13,7 @@ public sealed class FileOutputFactoryTests : IDisposable
     [Theory]
     [InlineData("speech.ogg", "OggS")]
     [InlineData("speech.wav", "RIFF")]
-    [InlineData("speech", "RIFF")]
+    [InlineData("speech.bin", "RIFF")]
     public void WritesTheFormatTheFileNameAsksFor(string name, string expectedMagic)
     {
         string path = _directory.PathOf(name);
@@ -21,6 +21,17 @@ public sealed class FileOutputFactoryTests : IDisposable
         FileOutputFactory.Create(path).Deliver(new AudioClip(24_000, [0f, 0.25f, -0.25f, 0f]));
 
         Assert.Equal(expectedMagic, Encoding.ASCII.GetString(File.ReadAllBytes(path), 0, 4));
+    }
+
+    [Fact]
+    public void AddsTheWavExtensionToAFileNameWithNone()
+    {
+        string requested = _directory.PathOf("speech");
+
+        FileOutputFactory.Create(requested).Deliver(new AudioClip(24_000, [0f, 0.25f, -0.25f, 0f]));
+
+        Assert.Equal("RIFF", Encoding.ASCII.GetString(File.ReadAllBytes(requested + ".wav"), 0, 4));
+        Assert.False(File.Exists(requested));
     }
 
     [Fact]

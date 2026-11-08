@@ -33,7 +33,7 @@ internal static class UsageText
 
         Options:
           -f, --file <path>      Write the speech to a file instead of playing it: Ogg Vorbis if the name
-                                 ends in .ogg, otherwise WAV.
+                                 ends in .ogg, otherwise WAV (.wav is added if the name has no extension).
           -p, --pitch <{0}-{1}>      Speech clock setting; higher is faster and higher pitched (default {2},
                                  as in the game's "Intruder alert!").
               --volume <{3}-{4}>     Volume; {3} is silent, as on the real board (default {5}).

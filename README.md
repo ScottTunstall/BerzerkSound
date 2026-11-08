@@ -35,7 +35,7 @@ BerzerkSound [options] [--] <words>
 BerzerkSound --list
 
   -f, --file <path>      Write the speech to a file instead of playing it: Ogg Vorbis if the name
-                         ends in .ogg, otherwise WAV.
+                         ends in .ogg, otherwise WAV (.wav is added if the name has no extension).
   -p, --pitch <0-7>      Speech clock setting; higher is faster and higher pitched (default 3).
       --volume <0-7>     Volume; 0 is silent, as on the real board (default 7).
   -r, --rom <path>       Directory or MAME zip holding the English speech ROMs.
@@ -69,7 +69,7 @@ BerzerkSound -p 1 "Kill the intruder"
 ```
 
 Save to a file instead of playing. The format follows the extension: `.ogg` writes Ogg Vorbis, anything
-else writes WAV.
+else writes WAV. A name with no extension gets `.wav` added, so `-f escape` writes `escape.wav`.
 
 ```console
 BerzerkSound -f escape.wav "The humanoid must not escape"
