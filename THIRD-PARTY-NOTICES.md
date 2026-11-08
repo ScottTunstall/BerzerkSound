@@ -49,3 +49,9 @@ was identified from the ROM data by the *TSI S14001A Speech Synthesizer LSI Inte
 
 The speech ROMs (`berzerk_r_vo_1c.1c`, `berzerk_r_vo_2c.2c`) are **not** included. Supply your own
 dumps, as you would for MAME.
+
+## OggVorbisEncoder
+
+Ogg Vorbis output uses the [OggVorbisEncoder](https://github.com/SteveLillis/.NET-Ogg-Vorbis-Encoder) NuGet
+package (a managed port of the Xiph.Org libvorbis encoder), distributed under the MIT license. The tests
+decode the files with [NVorbis](https://github.com/NVorbis/NVorbis), also MIT.
