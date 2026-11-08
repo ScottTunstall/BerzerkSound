@@ -49,7 +49,9 @@ internal static class UsageText
                     4 speech could not be played or written, 5 a word is not in Berzerk's vocabulary.
 
         Examples:
-          BerzerkSound "Intruder alert! Intruder alert!"
+          BerzerkSound "INTRUDER ALERT INTRUDER ALERT"
+          BerzerkSound "DESTROY THE CHICKEN"
+          BerzerkSound "THE HUMANOID MUST NOT ESCAPE"
           BerzerkSound -p 5 chicken fight like a robot
           BerzerkSound -f escape.wav "The humanoid must not escape"
 

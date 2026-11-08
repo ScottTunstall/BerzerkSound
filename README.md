@@ -46,12 +46,39 @@ BerzerkSound --list
 Examples:
 
 ```console
-BerzerkSound "Intruder alert! Intruder alert!"
-BerzerkSound -p 5 chicken fight like a robot
+BerzerkSound "INTRUDER ALERT INTRUDER ALERT"
+BerzerkSound "DESTROY THE CHICKEN"
+BerzerkSound "THE HUMANOID MUST NOT ESCAPE"
+BerzerkSound "Chicken! Fight like a robot!"
+BerzerkSound "Coins detected in pocket"
+```
+
+Words can be separate arguments or one quoted string, so these are the same:
+
+```console
+BerzerkSound "destroy the chicken"
+BerzerkSound destroy the chicken
+```
+
+Change the voice with pitch (0-7) and volume (0-7), as the game does for its robots:
+
+```console
+BerzerkSound -p 6 "Get the humanoid"
+BerzerkSound -p 1 "Kill the intruder"
+```
+
+Save to a WAV file instead of playing:
+
+```console
 BerzerkSound -f escape.wav "The humanoid must not escape"
 ```
 
-Case, punctuation and digits are ignored. Words can be separate arguments or one quoted string.
+Case, punctuation and digits are ignored. Anything Berzerk can't say is reported and nothing is played:
+
+```console
+> BerzerkSound "Hello robot"
+BerzerkSound: Berzerk cannot say the word 'Hello'. Run with --list to see the words it knows.
+```
 
 ### Supported words
 
